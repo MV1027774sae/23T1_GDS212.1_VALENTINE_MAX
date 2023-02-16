@@ -1,26 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
     //controls
-    public KeyCode left;
-    public KeyCode right;
-    public KeyCode jump;
-    public KeyCode fire;
+    [SerializeField] private KeyCode left = KeyCode.A;
+    [SerializeField] private KeyCode right = KeyCode.D;
+    [SerializeField] private KeyCode jump = KeyCode.W;
+    [SerializeField] private KeyCode fire = KeyCode.Mouse0;
 
     //movement variables
-    public float moveSpeed = 7;
-    public float jumpHeight = 15f;
+    [SerializeField] private float moveSpeed = 5;
+    [SerializeField] private float jumpHeight = 15f;
     private bool isGrounded;
 
     //fireball
-    public GameObject fireBall;
-    public float ballVelocity;
-    public Transform shootPoint;
+    [SerializeField] private GameObject fireBall;
+    [SerializeField] private Transform shootPoint;
+    [SerializeField] private float ballVelocity = 3;
+    [SerializeField] private float timeBetweenFiring = 1;
     private bool alreadyFired;
-    public float timeBetweenFiring;
 
     //declarations
     [SerializeField] private Rigidbody2D rb;
@@ -67,7 +68,9 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x * fr * Time.deltaTime, jumpHeight * fr * Time.deltaTime);
         }
 
-        Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        //Vector2 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        //Vector2 mouseScreenPosition = (Input.mousePosition);
+        Vector2 targetPosition = target.transform.localPosition;
         //mouseWorldPosition.z = 0f;
         //transform.position = mouseWorldPosition;
 
@@ -78,7 +81,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(fire) && !alreadyFired)
         {
             Rigidbody2D ball = Instantiate(fireBall, shootPoint.position, Quaternion.identity).GetComponent<Rigidbody2D>();
-            ball.velocity = new Vector2(mouseWorldPosition.x * ballVelocity * fr * Time.deltaTime, mouseWorldPosition.y * ballVelocity * fr * Time.deltaTime);
+            ball.velocity = new Vector2(targetPosition.x * ballVelocity * fr * Time.deltaTime, targetPosition.y * ballVelocity * fr * Time.deltaTime);
                 //(Vector2.velocit = mouseWorldPosition * 1, ForceMode2D.Force);
 
             alreadyFired = true;
