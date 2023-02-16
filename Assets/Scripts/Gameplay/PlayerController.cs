@@ -23,24 +23,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float timeBetweenFiring = 1;
     private bool alreadyFired;
 
+    //audio
+    [SerializeField] AudioSource soundManager;
+    [SerializeField] AudioClip fwoosh;
+
     //declarations
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
-    private int fr = 60;
-
-
-    private Vector2 targetFire;
-
-
-    [SerializeField] private Camera mainCamera;
-
     [SerializeField] private GameObject target;
+    private int fr = 60;
 
     private void Start()
     {
         Application.targetFrameRate = fr;
-
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -57,37 +53,25 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(moveSpeed * fr * Time.deltaTime, rb.velocity.y * fr * Time.deltaTime);
         }
-        else
-        {
-            //rb.velocity = new Vector2(0, rb.velocity.y * fr * Time.deltaTime);
-        }
 
         //jumping
         if (Input.GetKey(jump) && isGrounded)
         {
             rb.velocity = new Vector2(rb.velocity.x * fr * Time.deltaTime, jumpHeight * fr * Time.deltaTime);
         }
-
-        //Vector2 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        //Vector2 mouseScreenPosition = (Input.mousePosition);
-        Vector2 targetPosition = target.transform.localPosition;
-        //mouseWorldPosition.z = 0f;
-        //transform.position = mouseWorldPosition;
-
-        //target.gameObject.GetComponent<Transform>();
-        //targetFire = target.gameObject.GetComponent<Transform>();
-
+        
         //firing
+        Vector2 targetPosition = target.transform.localPosition;
+    
         if (Input.GetKeyDown(fire) && !alreadyFired)
         {
             Rigidbody2D ball = Instantiate(fireBall, shootPoint.position, Quaternion.identity).GetComponent<Rigidbody2D>();
             ball.velocity = new Vector2(targetPosition.x * ballVelocity * fr * Time.deltaTime, targetPosition.y * ballVelocity * fr * Time.deltaTime);
-                //(Vector2.velocit = mouseWorldPosition * 1, ForceMode2D.Force);
 
             alreadyFired = true;
             Invoke(nameof(ResetFire), timeBetweenFiring);
 
-            //Destroy(fireBall.gameObject, 2f);
+            soundManager.PlayOneShot(fwoosh);
         }
     }
     private void ResetFire()
